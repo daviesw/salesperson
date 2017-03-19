@@ -48,7 +48,7 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 		//vertex's key attribute set to MAX_INT
 		vertexKey[i] = INT_MAX;
 		//vertex has parent attribute set to NULL
-		parentVertex[0] = std::nan(nullptr);
+		parentVertex[i] = 0;
 	}
 	
 	vertexKey[0] = 0;
