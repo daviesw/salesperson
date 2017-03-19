@@ -5,6 +5,7 @@
 #include <string>
 #include <climits>
 #include <stack>
+#include <limits>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/tokenizer.hpp>
@@ -44,8 +45,10 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 
 	for (int i = 0; i < numVertices; i++) 
 	{
-		vertexKey[i] = INT_MAX;//vertex's key attribute set to MAX_INT
-		parentVertex = NULL;   //vertex has parent attribute set to NULL
+		//vertex's key attribute set to MAX_INT
+		vertexKey[i] = INT_MAX;
+		//vertex has parent attribute set to NULL
+		parentVertex[0] = std::nan(nullptr);
 	}
 	
 	vertexKey[0] = 0;
@@ -136,7 +139,8 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 		last = odd.end();
 		current = odd.begin() + 1;
 		
-		while (current != last) {
+		while (current != last)
+		{
 			int testDistance = dist(position_vec[*start], position_vec[*current]);
 			if (testDistance < distance) 
 			{
@@ -146,8 +150,8 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 			}
 
 			++current;
-
 		}
+
 		//create edge between x and match
 		mst[match].push_back(*start);
 		mst[*start].push_back(match);
@@ -155,27 +159,30 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 		odd.erase(start);
 		odd.erase(minDistance);
 	}
-	/*Next, make Euler tour. Create a stack for vertices and an int vector called tour
- 	* Initialize a variable called current, set equal to start
- 	* put current in int vector
- 	* Next is a do-while loop that iterates while stack isn't empty or
- 	* current's spot on the adjacency list isn't empty.
- 	* In this loop check if current's adjacency list is empty. If not
- 	* push current onto the stack and assign its first neighbor to
- 	* be the new current. Then, remove the edge between the two.
- 	* If current's adjacency list was empty, however, add current to
- 	* the tour, assign the top vertex from stack to current and remove
- 	* it from the stack. Adapted from http://www.graph-magics.com/articles/euler.php
- 	*/
-	
+
+	/**
+	 * Next, make Euler tour. Create a stack for vertices and an int vector called tour
+	 * Initialize a variable called current, set equal to start
+	 * put current in int vector
+	 * Next is a do-while loop that iterates while stack isn't empty or
+	 * current's spot on the adjacency list isn't empty.
+	 * In this loop check if current's adjacency list is empty. If not
+	 * push current onto the stack and assign its first neighbor to
+	 * be the new current. Then, remove the edge between the two.
+	 * If current's adjacency list was empty, however, add current to
+	 * the tour, assign the top vertex from stack to current and remove
+	 * it from the stack. Adapted from http://www.graph-magics.com/articles/euler.php
+	 */
+
 	std::vector<int> euler;
-	using std::stack;
-	stack<int> eStack;
+	std::stack<int> eStack;
+
 	int currentVertex = 0;
 	int tempIndex;
 	int size;
 
-	do {
+	do
+	{
 		if (mst[currentVertex].size() != 0)
 		{
 			tempIndex = currentVertex;
@@ -184,12 +191,13 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 			mst[tempIndex].pop_back();
 			size = mst[currentVertex].size();
 
+			//TODO:rewrite loop as while loop to avoid need for break statement
 			for (int i = 0; i < size; i++)
 			{
 				if (mst[currentVertex][i] == tempIndex)
 				{
 					mst[currentVertex].erase(mst[currentVertex].begin() + i);
-					break; //TODO:rewrite loop as while loop to avoid need for break statement
+					break; 
 				}
 			}
 		}
@@ -199,17 +207,19 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 			currentVertex = eStack.top();
 			eStack.pop();
 		}
-	} while ((mst[currentVertex].size() > 0) || (!eStack.empty()));
-	euler.push_back(currentVertex);
-	//next, remove repeated vertices
+	} 
+	while ((mst[currentVertex].size() > 0) || (!eStack.empty()));
 
+	euler.push_back(currentVertex);
+
+	// remove repeated vertices
 	bool inHam[numVertices];
 	int cityDistance;
 	int tourLength = 0;
 
 	for (int i = 0; i < numVertices; i++) 
 		inHam[i] = false;
-	
+
 	int begin = euler[0];
 	inHam[begin] = true;
 	std::vector<int>::iterator cityOne = euler.begin();
@@ -231,6 +241,7 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 	} while (cityTwo != euler.end());
 
 	tourLength += dist(position_vec[*cityOne], position_vec[*cityTwo]);
+
 	//make arr into a new array of size num vertices, add elements of tour
 	//in order
 	int totalVertices = euler.size();
@@ -269,6 +280,8 @@ int main ()
 	//call the function with a reference to the vector of coordinates, tell
 	//the function explicitly that we have only 1 element.
 	auto tour_length = christofides(&position_vec, 1, solution_set);
+
+	std::cout << tour_length << std::endl;
 
 	return 0;
 }
