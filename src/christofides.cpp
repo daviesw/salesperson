@@ -15,7 +15,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
 
-/***************************************************************************
+/**
  * Function: christofides
  * Description: Implements the christofides algorithm for approximating TSP
  * Parameters: a vector of points that store x and y coordinates, 
@@ -25,11 +25,9 @@
  * Post-Conditions: Route for the salesman has been determined, along with
  * solution. The route is stored as an array in the pointer that was passed
  * as a parameter.
- * *************************************************************************/
-
+ */
 template<typename PositionVector>
 int christofides(PositionVector *position_vec, int numVertices, int *arr) {
-	typedef std::vector<simple_point<double> > PositionVec;
 	typedef boost::adjacency_matrix<boost::undirectedS, boost::no_property,
 		boost::property <boost::edge_weight_t, double> > Graph;
 
@@ -46,6 +44,7 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 
 	int minIndex;
 	int currentMin;
+
 	for (int i = 0; i < numVertices; i++) 
 	{
 		vertexKey[i] = INT_MAX;//vertex's key attribute set to MAX_INT
@@ -75,6 +74,7 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 		for (int j = 0; j < numVertices; j++)
 		{
 			//TODO: Implement dist function to find edge length
+
 			distance = dist(position_vec[i], position_vec[j]);
 
 			if (inTree[j] != true && distance < vertexKey[j])
@@ -91,8 +91,8 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 	//between a vertex and whichever is in its parent attribute
 	//Next 28 lines adapted from pseudocode at 
 	//https://github.com/beckysag/traveling-salesman/
-	using std::vector;
-	vector< vector<int> > mst(numVertices);
+
+	std::vector< std::vector<int> > mst(numVertices);
 	int u;
 
 	for (int v = 0; v < numVertices; v++)
@@ -106,7 +106,7 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 	}
 
 	//Next, we find a set of Odd vertices
-	vector<int> odd;
+	std::vector<int> odd;
 	int degree;
 	
 	for (int i = 0; i < numVertices; i++)
@@ -171,7 +171,7 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
  	* it from the stack. Adapted from http://www.graph-magics.com/articles/euler.php
  	*/
 	
-	vector<int> euler;
+	std::vector<int> euler;
 	using std::stack;
 	stack<int> eStack;
 	int currentVertex = 0;
@@ -246,5 +246,28 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 
 int main ()
 {
+	typedef std::vector<boost::simple_point<double> > PositionVec;
+
+	// create one point
+	boost::simple_point<double> vertex;
+
+
+
+	// propose a case where the input is a potential tuple of strings
+	std::string x("10");
+	std::string y("20");
+
+	// set the euclidean coordinates of our vertex, or 'point' in 2D space
+	vertex.x = lexical_cast<double>(x);
+	vertex.y = lexical_cast<double>(y);
+
+	// push this point to a vector (list) of position vertices (position_vec)
+	position_vec.push_back(vertex);
+
+	//TODO: Fix the function paramater, or decide if an *arr is important
+	//call the function with a reference to the vector of coordinates, tell
+	//the function explicitly that we have only 1 element.
+	christofides(&positition_vec, 1);
+
 	return 0;
 }

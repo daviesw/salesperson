@@ -103,7 +103,7 @@ void print_position_vector(PositionVector *pos_vec)
     using boost::simple_point;
 
     for (vector<simple_point<double> >::iterator itr = pos_vec->begin();
-            itr != pos_vec->end(); ++itr++)
+            itr != pos_vec->end(); ++itr)
         cout << "(" << itr->x << ", " << itr->y << ")" << endl;
 }
 
