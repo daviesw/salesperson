@@ -28,9 +28,6 @@
  */
 template<typename PositionVector>
 int christofides(PositionVector *position_vec, int numVertices, int *arr) {
-	typedef boost::adjacency_matrix<boost::undirectedS, boost::no_property,
-		boost::property <boost::edge_weight_t, double> > Graph;
-
 	/*
 	The following will find a minimum-spanning tree using prim's algorithm
 	Note that boost has a function for this so feel free to replace
@@ -238,15 +235,18 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 	//in order
 	int totalVertices = euler.size();
 	arr = new int[totalVertices];
-	return tourLength;
 
 	//return sum of weights of edges between vertices as they appear in
 	//tour
+	return tourLength;
 }
 
 int main ()
 {
 	typedef std::vector<boost::simple_point<double> > PositionVec;
+
+	// create a container for our points
+	PositionVec position_vec;
 
 	// create one point
 	boost::simple_point<double> vertex;
@@ -257,16 +257,18 @@ int main ()
 	std::string y("20");
 
 	// set the euclidean coordinates of our vertex, or 'point' in 2D space
-	vertex.x = lexical_cast<double>(x);
-	vertex.y = lexical_cast<double>(y);
+	vertex.x = boost::lexical_cast<double>(x);
+	vertex.y = boost::lexical_cast<double>(y);
 
 	// push this point to a vector (list) of position vertices (position_vec)
 	position_vec.push_back(vertex);
 
+	int *solution_set;
+
 	//TODO: Fix the function paramater, or decide if an *arr is important
 	//call the function with a reference to the vector of coordinates, tell
 	//the function explicitly that we have only 1 element.
-	christofides(&positition_vec, 1);
+	auto tour_length = christofides(&position_vec, 1, solution_set);
 
 	return 0;
 }
