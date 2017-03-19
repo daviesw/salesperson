@@ -1,3 +1,4 @@
+// vim: sw=4 ts=4 : //
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -25,18 +26,20 @@
  * solution. The route is stored as an array in the pointer that was passed
  * as a parameter.
  * *************************************************************************/
-typedef std::vector<simple_point<double> > PositionVec;
-typedef boost::adjacency_matrix<boost::undirectedS, boost::no_property,
-        boost::property <boost::edge_weight_t, double> > Graph;
+
 template<typename PositionVector>
 int christofides(PositionVector *position_vec, int numVertices, int *arr) {
-	
-	/*The following will find a minimum-spanning tree using prim's algorithm
- 	 *Note that boost has a function for this so feel free to replace
-	 * so long as that functions output can be adapted to the rest of the
-	 * program
-	 */ 
-	
+	typedef std::vector<simple_point<double> > PositionVec;
+	typedef boost::adjacency_matrix<boost::undirectedS, boost::no_property,
+		boost::property <boost::edge_weight_t, double> > Graph;
+
+	/*
+	The following will find a minimum-spanning tree using prim's algorithm
+	Note that boost has a function for this so feel free to replace
+	so long as that functions output can be adapted to the rest of the
+	program
+	*/
+
 	int parentVertex[numVertices];
 	int vertexKey[numVertices];
 	int inTree[numVertices];
@@ -91,7 +94,7 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 	using std::vector;
 	vector< vector<int> > mst(numVertices);
 	int u;
-	
+
 	for (int v = 0; v < numVertices; v++)
 	{
 		u = parentVertex[v];
@@ -103,7 +106,6 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 	}
 
 	//Next, we find a set of Odd vertices
-	
 	vector<int> odd;
 	int degree;
 	
@@ -117,21 +119,20 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 		}
 	}
 	
-	/*Next, find minimum weight matching on vertices from Odd, adding
- 	 * them to MST s you do so 
- 	 */
-	
-        int match;
-        
+	/*
+	Next, find minimum weight matching on vertices from Odd, adding
+	them to MST s you do so.
+	*/
+	int match;
 	std::vector<int>::iterator start;
 	std::vector<int>::iterator minDistance;
 	std::vector<int>::iterator last;
 	std::vector<int>::iterator current;
 
-	while (odd.size() != 0)
-	{
 	//intialize match, a variable storing a vertex
 	//while Odd isn't empty
+	while (odd.size())
+	{
 		//remove vertex from odd, storing it in variable x
 		start = odd.begin();
 		distance = INT_MAX;
@@ -182,45 +183,42 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 		{
 			tempIndex = currentVertex;
 			eStack.push(tempIndex);
-                        currentVertex = mst[tempIndex].back(); //get first neighbor
+			currentVertex = mst[tempIndex].back(); //get first neighbor
 			mst[tempIndex].pop_back();
-                        size = mst[currentVertex].size();
+			size = mst[currentVertex].size();
 
-                        for (int i = 0; i < size; i++)
-                        {
-                                if (mst[currentVertex][i] == tempIndex)
-                                {
-                                        mst[currentVertex].erase(mst[currentVertex].begin() + i);
-                                        break; //TODO:rewrite loop as while loop to avoid need for break statement
+			for (int i = 0; i < size; i++)
+			{
+				if (mst[currentVertex][i] == tempIndex)
+				{
+					mst[currentVertex].erase(mst[currentVertex].begin() + i);
+					break; //TODO:rewrite loop as while loop to avoid need for break statement
 				}
-                        }
+			}
 		}
 		else
 		{
 			euler.push_back(currentVertex);
-
 			currentVertex = eStack.top();
 			eStack.pop();
 		}
 	} while ((mst[currentVertex].size() > 0) || (!eStack.empty()));
 	euler.push_back(currentVertex);
 	//next, remove repeated vertices
-	
+
 	bool inHam[numVertices];
 	int cityDistance;
 	int tourLength = 0;
+
 	for (int i = 0; i < numVertices; i++) 
-	{
 		inHam[i] = false;
-	}
 	
 	int begin = euler[0];
 	inHam[begin] = true;
 	std::vector<int>::iterator cityOne = euler.begin();
-        std::vector<int>::iterator cityTwo = euler.begin() + 1;
+	std::vector<int>::iterator cityTwo = euler.begin() + 1;
 
 	do {
-		
 		if (inHam[*cityTwo] == false) 
 		{
 			cityDistance = dist(position_vec[*cityOne], position_vec[*cityTwo]);
@@ -233,27 +231,20 @@ int christofides(PositionVector *position_vec, int numVertices, int *arr) {
 		{
 			cityTwo = euler.erase(cityTwo);
 		}
-
-
 	} while (cityTwo != euler.end());
-
 
 	tourLength += dist(position_vec[*cityOne], position_vec[*cityTwo]);
 	//make arr into a new array of size num vertices, add elements of tour
 	//in order
 	int totalVertices = euler.size();
 	arr = new int[totalVertices];
-	
 	return tourLength;
+
 	//return sum of weights of edges between vertices as they appear in
 	//tour
 }
 
 int main ()
 {
-	typedef std::vector<simple_point<double> > PositionVec;
-typedef boost::adjacency_matrix<boost::undirectedS, boost::no_property,
-        boost::property <boost::edge_weight_t, double> > Graph;
-
 	return 0;
 }
