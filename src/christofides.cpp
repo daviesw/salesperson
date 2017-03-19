@@ -251,9 +251,8 @@ int main ()
 	// create one point
 	boost::simple_point<double> vertex;
 
-
-
-	// propose a case where the input is a potential tuple of strings
+	// Propose a case where the input is a potential tuple of strings.
+	// This is consistent with reading input from a text file
 	std::string x("10");
 	std::string y("20");
 
